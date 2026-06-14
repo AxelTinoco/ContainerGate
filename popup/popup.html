@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContainerGate</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="#0D1B2A"/>
+        <path d="M7 10.5L14 7L21 10.5V17.5L14 21L7 17.5V10.5Z" stroke="#00C2FF" stroke-width="1.5" fill="none"/>
+        <path d="M11 14L13 16L17 12" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="title">ContainerGate</div>
+      <div class="subtitle">Gestor de contenedores</div>
+    </div>
+    <div class="badge" id="status-badge">Activo</div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="whitelist">Lista Blanca</button>
+    <button class="tab" data-tab="rules">Reglas</button>
+    <button class="tab" data-tab="about">Acerca</button>
+  </nav>
+
+  <!-- ── Tab: Lista Blanca ─────────────────────────────────────── -->
+  <section class="tab-content active" id="tab-whitelist">
+    <p class="section-desc">
+      Los dominios en esta lista se abrirán sin preguntar (en el contenedor por defecto).
+    </p>
+
+    <div class="input-row">
+      <input
+        type="text"
+        id="whitelist-input"
+        placeholder="ejemplo.com"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="btn btn-primary" id="whitelist-add">Agregar</button>
+    </div>
+
+    <ul class="item-list" id="whitelist-list">
+      <li class="empty-state">No hay dominios en la lista blanca</li>
+    </ul>
+  </section>
+
+  <!-- ── Tab: Reglas ──────────────────────────────────────────── -->
+  <section class="tab-content" id="tab-rules">
+    <p class="section-desc">
+      Dominios con contenedor recordado. Puedes eliminar una regla para que vuelva a preguntar.
+    </p>
+
+    <ul class="item-list" id="rules-list">
+      <li class="empty-state">No hay reglas guardadas</li>
+    </ul>
+  </section>
+
+  <!-- ── Tab: Acerca ──────────────────────────────────────────── -->
+  <section class="tab-content" id="tab-about">
+    <div class="about-block">
+      <svg width="56" height="56" viewBox="0 0 28 28" fill="none" style="border-radius:12px">
+        <rect width="28" height="28" rx="8" fill="#0D1B2A"/>
+        <path d="M7 10.5L14 7L21 10.5V17.5L14 21L7 17.5V10.5Z" stroke="#00C2FF" stroke-width="1.5" fill="none"/>
+        <path d="M11 14L13 16L17 12" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h2 class="about-title">ContainerGate</h2>
+      <p class="about-version">Versión 1.0.0</p>
+      <p class="about-desc">
+        Intercepta URLs que se abren desde aplicaciones externas y te permite
+        elegir en qué contenedor de Firefox se abrirán, manteniendo tus
+        identidades digitales separadas.
+      </p>
+      <div class="about-features">
+        <div class="feature">🚪 Intercepción de links externos</div>
+        <div class="feature">📦 Selector de contenedor visual</div>
+        <div class="feature">✅ Lista blanca por dominio</div>
+        <div class="feature">💾 Reglas recordadas por dominio</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>
