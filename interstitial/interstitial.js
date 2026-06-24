@@ -7,6 +7,9 @@
 (function () {
   "use strict";
 
+  // Atajo para traducir cadenas dinámicas
+  const t = (key, subs) => browser.i18n.getMessage(key, subs) || key;
+
   const ICON_MAP = {
     fingerprint: "🔏",
     briefcase: "💼",
@@ -44,7 +47,7 @@
   const overlay = document.getElementById("cg-overlay");
 
   // Mostrar la URL destino en el título de la pestaña para que se vea en la barra
-  document.title = "Abrir " + (domain || "enlace") + " — ContainerGate";
+  document.title = t("openLinkTitle", [domain || t("linkWord")]);
 
   // ─── Pintar info de la URL ───────────────────────────────────────────────
 
@@ -52,7 +55,7 @@
   const urlFull = document.getElementById("cg-url-full");
   urlFull.textContent = targetUrl.length > 70 ? targetUrl.slice(0, 67) + "…" : targetUrl;
   urlFull.title = targetUrl;
-  document.getElementById("cg-remember-domain").textContent = domain || "este sitio";
+  document.getElementById("cg-remember-domain").textContent = domain || t("thisSite");
 
   // ─── Cargar contenedores y construir las tarjetas ────────────────────────
 
@@ -69,7 +72,7 @@
     if (!containers.length) {
       const empty = document.createElement("div");
       empty.className = "cg-empty";
-      empty.textContent = "No tienes contenedores. Instala Multi-Account Containers o usa «Abrir sin contenedor».";
+      empty.textContent = t("noContainers");
       grid.replaceWith(empty);
     } else {
       containers.forEach((c) => {
@@ -98,7 +101,22 @@
       });
     }
 
-    requestAnimationFrame(() => overlay.classList.add("cg-visible"));
+    requestAnimationFrame(() => {
+      overlay.classList.add("cg-visible");
+      // Mover el foco dentro del diálogo: primer contenedor o, si no hay,
+      // el botón "Abrir sin contenedor".
+      const firstCard = document.querySelector(".cg-container-card");
+      (firstCard || document.getElementById("cg-open-normal")).focus();
+    });
+  }
+
+  // Devuelve los elementos enfocables visibles dentro del modal
+  function getFocusable() {
+    return Array.from(
+      document.querySelectorAll(
+        '#cg-modal button, #cg-modal input, #cg-modal [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => !el.disabled && el.offsetParent !== null);
   }
 
   // ─── Acciones ────────────────────────────────────────────────────────────
@@ -125,6 +143,22 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       browser.runtime.sendMessage({ type: "CG_CANCEL" });
+      return;
+    }
+
+    // Trampa de foco: Tab no debe salir del diálogo modal
+    if (e.key === "Tab") {
+      const focusable = getFocusable();
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   });
 

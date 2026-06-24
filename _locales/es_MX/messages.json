@@ -1,0 +1,46 @@
+{
+  "extName": {
+    "message": "ContainerGate",
+    "description": "Nombre de la extensión"
+  },
+  "extDescription": {
+    "message": "Intercepta URLs externas y te pregunta en qué contenedor de Firefox abrirlas.",
+    "description": "Descripción de la extensión"
+  },
+  "subtitle": { "message": "Gestor de contenedores" },
+  "badgeActive": { "message": "Activo" },
+  "tabWhitelist": { "message": "Lista blanca" },
+  "tabRules": { "message": "Reglas" },
+  "tabAbout": { "message": "Acerca" },
+  "whitelistDesc": { "message": "Los dominios en esta lista se abrirán sin preguntar (en el contenedor por defecto)." },
+  "whitelistPlaceholder": { "message": "ejemplo.com" },
+  "btnAdd": { "message": "Agregar" },
+  "whitelistEmpty": { "message": "No hay dominios en la lista blanca" },
+  "rulesDesc": { "message": "Dominios con contenedor recordado. Puedes eliminar una regla para que vuelva a preguntar." },
+  "rulesEmpty": { "message": "No hay reglas guardadas" },
+  "aboutVersion": { "message": "Versión 1.0.0" },
+  "aboutDesc": { "message": "Intercepta URLs que se abren desde aplicaciones externas y te permite elegir en qué contenedor de Firefox se abrirán, manteniendo tus identidades digitales separadas." },
+  "feature1": { "message": "🚪 Intercepción de links externos" },
+  "feature2": { "message": "📦 Selector de contenedor visual" },
+  "feature3": { "message": "✅ Lista blanca por dominio" },
+  "feature4": { "message": "💾 Reglas recordadas por dominio" },
+  "btnRemove": { "message": "✕ Eliminar" },
+  "btnRemoveShort": { "message": "✕" },
+  "toastDomainRemoved": { "message": "Dominio eliminado" },
+  "toastDomainAdded": { "message": "Dominio agregado ✓" },
+  "toastRuleRemoved": { "message": "Regla eliminada" },
+  "interstitialQuestion": { "message": "¿En qué contenedor quieres abrir este enlace?" },
+  "cancel": { "message": "Cancelar" },
+  "containersAvailable": { "message": "Contenedores disponibles" },
+  "rememberFor": { "message": "Recordar para" },
+  "openWithoutContainer": { "message": "Abrir sin contenedor" },
+  "noContainers": { "message": "No tienes contenedores. Instala Multi-Account Containers o usa «Abrir sin contenedor»." },
+  "thisSite": { "message": "este sitio" },
+  "linkWord": { "message": "enlace" },
+  "openLinkTitle": {
+    "message": "Abrir $DOMAIN$ — ContainerGate",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "tabsLabel": { "message": "Secciones" },
+  "whitelistInputLabel": { "message": "Dominio para añadir a la lista blanca" }
+}

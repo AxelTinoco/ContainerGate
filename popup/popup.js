@@ -9,14 +9,37 @@ const COLOR_MAP = {
   pink: "#ec4899", purple: "#a855f7",
 };
 
-// ─── Tab switching ────────────────────────────────────────────────────────
+// Atajo para traducir cadenas dinámicas
+const t = (key) => browser.i18n.getMessage(key) || key;
 
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
-    document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
-    tab.classList.add("active");
-    document.getElementById(`tab-${tab.dataset.tab}`).classList.add("active");
+// ─── Tab switching (patrón ARIA Tabs) ─────────────────────────────────────
+
+const tabs = Array.from(document.querySelectorAll(".tab"));
+
+function activateTab(tab, setFocus = true) {
+  tabs.forEach((el) => {
+    const selected = el === tab;
+    el.classList.toggle("active", selected);
+    el.setAttribute("aria-selected", selected ? "true" : "false");
+    el.tabIndex = selected ? 0 : -1;
+  });
+  document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
+  document.getElementById(`tab-${tab.dataset.tab}`).classList.add("active");
+  if (setFocus) tab.focus();
+}
+
+tabs.forEach((tab, i) => {
+  tab.addEventListener("click", () => activateTab(tab, false));
+  tab.addEventListener("keydown", (e) => {
+    let next = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = tabs[(i + 1) % tabs.length];
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = tabs[(i - 1 + tabs.length) % tabs.length];
+    else if (e.key === "Home") next = tabs[0];
+    else if (e.key === "End") next = tabs[tabs.length - 1];
+    if (next) {
+      e.preventDefault();
+      activateTab(next);
+    }
   });
 });
 
@@ -28,7 +51,7 @@ async function loadWhitelist() {
   list.innerHTML = "";
 
   if (!whitelist.length) {
-    list.innerHTML = '<li class="empty-state">No hay dominios en la lista blanca</li>';
+    list.innerHTML = `<li class="empty-state">${escHtml(t("whitelistEmpty"))}</li>`;
     return;
   }
 
@@ -37,11 +60,11 @@ async function loadWhitelist() {
     li.className = "item-row";
     li.innerHTML = `
       <span class="item-domain">${escHtml(domain)}</span>
-      <button class="btn btn-ghost" data-domain="${escHtml(domain)}">✕ Eliminar</button>`;
+      <button class="btn btn-ghost" data-domain="${escHtml(domain)}">${escHtml(t("btnRemove"))}</button>`;
     li.querySelector("button").addEventListener("click", async () => {
       const updated = whitelist.filter((d) => d !== domain);
       await browser.runtime.sendMessage({ type: "CG_SET_WHITELIST", whitelist: updated });
-      showToast("Dominio eliminado");
+      showToast(t("toastDomainRemoved"));
       loadWhitelist();
     });
     list.appendChild(li);
@@ -57,7 +80,7 @@ document.getElementById("whitelist-add").addEventListener("click", async () => {
   if (!whitelist.includes(raw)) {
     whitelist.push(raw);
     await browser.runtime.sendMessage({ type: "CG_SET_WHITELIST", whitelist });
-    showToast("Dominio agregado ✓");
+    showToast(t("toastDomainAdded"));
   }
   input.value = "";
   loadWhitelist();
@@ -83,7 +106,7 @@ async function loadRules() {
 
   const entries = Object.entries(rules);
   if (!entries.length) {
-    list.innerHTML = '<li class="empty-state">No hay reglas guardadas</li>';
+    list.innerHTML = `<li class="empty-state">${escHtml(t("rulesEmpty"))}</li>`;
     return;
   }
 
@@ -100,10 +123,10 @@ async function loadRules() {
         <span class="item-dot" style="background:${color}"></span>
         ${escHtml(name)}
       </span>
-      <button class="btn btn-ghost" data-domain="${escHtml(domain)}">✕</button>`;
+      <button class="btn btn-ghost" data-domain="${escHtml(domain)}">${escHtml(t("btnRemoveShort"))}</button>`;
     li.querySelector("button").addEventListener("click", async () => {
       await browser.runtime.sendMessage({ type: "CG_DELETE_RULE", domain });
-      showToast("Regla eliminada");
+      showToast(t("toastRuleRemoved"));
       loadRules();
     });
     list.appendChild(li);

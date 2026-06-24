@@ -1,0 +1,46 @@
+{
+  "extName": {
+    "message": "ContainerGate",
+    "description": "Название расширения"
+  },
+  "extDescription": {
+    "message": "Перехватывает внешние URL-адреса и спрашивает, в каком контейнере Firefox их открыть.",
+    "description": "Описание расширения"
+  },
+  "subtitle": { "message": "Менеджер контейнеров" },
+  "badgeActive": { "message": "Активно" },
+  "tabWhitelist": { "message": "Белый список" },
+  "tabRules": { "message": "Правила" },
+  "tabAbout": { "message": "О расширении" },
+  "whitelistDesc": { "message": "Домены из этого списка будут открываться без запроса (в контейнере по умолчанию)." },
+  "whitelistPlaceholder": { "message": "example.com" },
+  "btnAdd": { "message": "Добавить" },
+  "whitelistEmpty": { "message": "В белом списке нет доменов" },
+  "rulesDesc": { "message": "Домены с запомненным контейнером. Удалите правило, чтобы снова получать запрос." },
+  "rulesEmpty": { "message": "Нет сохранённых правил" },
+  "aboutVersion": { "message": "Версия 1.0.0" },
+  "aboutDesc": { "message": "Перехватывает URL-адреса, открываемые из внешних приложений, и позволяет выбрать, в каком контейнере Firefox они откроются, сохраняя ваши цифровые личности раздельными." },
+  "feature1": { "message": "🚪 Перехват внешних ссылок" },
+  "feature2": { "message": "📦 Визуальный выбор контейнера" },
+  "feature3": { "message": "✅ Белый список по доменам" },
+  "feature4": { "message": "💾 Запомненные правила по доменам" },
+  "btnRemove": { "message": "✕ Удалить" },
+  "btnRemoveShort": { "message": "✕" },
+  "toastDomainRemoved": { "message": "Домен удалён" },
+  "toastDomainAdded": { "message": "Домен добавлен ✓" },
+  "toastRuleRemoved": { "message": "Правило удалено" },
+  "interstitialQuestion": { "message": "В каком контейнере открыть эту ссылку?" },
+  "cancel": { "message": "Отмена" },
+  "containersAvailable": { "message": "Доступные контейнеры" },
+  "rememberFor": { "message": "Запомнить для" },
+  "openWithoutContainer": { "message": "Открыть без контейнера" },
+  "noContainers": { "message": "У вас нет контейнеров. Установите Multi-Account Containers или используйте «Открыть без контейнера»." },
+  "thisSite": { "message": "этот сайт" },
+  "linkWord": { "message": "ссылку" },
+  "openLinkTitle": {
+    "message": "Открыть $DOMAIN$ — ContainerGate",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "tabsLabel": { "message": "Разделы" },
+  "whitelistInputLabel": { "message": "Домен для добавления в белый список" }
+}

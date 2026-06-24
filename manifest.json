@@ -2,7 +2,8 @@
   "manifest_version": 2,
   "name": "ContainerGate",
   "version": "1.0.0",
-  "description": "Intercepta URLs externas y te pregunta en qué contenedor de Firefox abrirlas.",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "author": "ContainerGate",
 
   "permissions": [
@@ -33,7 +34,8 @@
   "web_accessible_resources": [
     "interstitial/interstitial.html",
     "interstitial/interstitial.css",
-    "interstitial/interstitial.js"
+    "interstitial/interstitial.js",
+    "i18n.js"
   ],
 
   "icons": {

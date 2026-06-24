@@ -1,0 +1,46 @@
+{
+  "extName": {
+    "message": "ContainerGate",
+    "description": "Názov rozšírenia"
+  },
+  "extDescription": {
+    "message": "Zachytáva externé adresy URL a pýta sa, v ktorom kontajneri Firefoxu ich otvoriť.",
+    "description": "Popis rozšírenia"
+  },
+  "subtitle": { "message": "Správca kontajnerov" },
+  "badgeActive": { "message": "Aktívne" },
+  "tabWhitelist": { "message": "Biela listina" },
+  "tabRules": { "message": "Pravidlá" },
+  "tabAbout": { "message": "O aplikácii" },
+  "whitelistDesc": { "message": "Domény v tomto zozname sa otvoria bez opýtania (v predvolenom kontajneri)." },
+  "whitelistPlaceholder": { "message": "priklad.com" },
+  "btnAdd": { "message": "Pridať" },
+  "whitelistEmpty": { "message": "V bielej listine nie sú žiadne domény" },
+  "rulesDesc": { "message": "Domény so zapamätaným kontajnerom. Pravidlo môžete odstrániť, aby sa znova pýtalo." },
+  "rulesEmpty": { "message": "Žiadne uložené pravidlá" },
+  "aboutVersion": { "message": "Verzia 1.0.0" },
+  "aboutDesc": { "message": "Zachytáva adresy URL otvárané z externých aplikácií a umožňuje vám vybrať, v ktorom kontajneri Firefoxu sa otvoria, čím udržiava vaše digitálne identity oddelené." },
+  "feature1": { "message": "🚪 Zachytávanie externých odkazov" },
+  "feature2": { "message": "📦 Vizuálny výber kontajnera" },
+  "feature3": { "message": "✅ Biela listina podľa domény" },
+  "feature4": { "message": "💾 Zapamätané pravidlá podľa domény" },
+  "btnRemove": { "message": "✕ Odstrániť" },
+  "btnRemoveShort": { "message": "✕" },
+  "toastDomainRemoved": { "message": "Doména odstránená" },
+  "toastDomainAdded": { "message": "Doména pridaná ✓" },
+  "toastRuleRemoved": { "message": "Pravidlo odstránené" },
+  "interstitialQuestion": { "message": "V ktorom kontajneri chcete otvoriť tento odkaz?" },
+  "cancel": { "message": "Zrušiť" },
+  "containersAvailable": { "message": "Dostupné kontajnery" },
+  "rememberFor": { "message": "Zapamätať pre" },
+  "openWithoutContainer": { "message": "Otvoriť bez kontajnera" },
+  "noContainers": { "message": "Nemáte žiadne kontajnery. Nainštalujte si Multi-Account Containers alebo použite „Otvoriť bez kontajnera“." },
+  "thisSite": { "message": "túto stránku" },
+  "linkWord": { "message": "odkaz" },
+  "openLinkTitle": {
+    "message": "Otvoriť $DOMAIN$ — ContainerGate",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "tabsLabel": { "message": "Sekcie" },
+  "whitelistInputLabel": { "message": "Doména na pridanie do bieleho zoznamu" }
+}
