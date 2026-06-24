@@ -30,14 +30,10 @@
     "default_popup": "popup/popup.html"
   },
 
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content/modal.js"],
-      "css": ["content/modal.css"],
-      "run_at": "document_idle",
-      "all_frames": false
-    }
+  "web_accessible_resources": [
+    "interstitial/interstitial.html",
+    "interstitial/interstitial.css",
+    "interstitial/interstitial.js"
   ],
 
   "icons": {

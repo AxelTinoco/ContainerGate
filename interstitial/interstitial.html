@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContainerGate — Seleccionar contenedor</title>
+  <link rel="stylesheet" href="interstitial.css" />
+</head>
+<body>
+  <div id="cg-overlay" role="dialog" aria-modal="true" aria-label="ContainerGate - Seleccionar contenedor">
+    <div id="cg-modal">
+      <div class="cg-header">
+        <div class="cg-logo">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="8" fill="#0D1B2A"/>
+            <path d="M7 10.5L14 7L21 10.5V17.5L14 21L7 17.5V10.5Z" stroke="#00C2FF" stroke-width="1.5" fill="none"/>
+            <path d="M11 14L13 16L17 12" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="cg-title-block">
+          <h1 class="cg-title">ContainerGate</h1>
+          <p class="cg-subtitle">¿En qué contenedor quieres abrir este enlace?</p>
+        </div>
+        <button class="cg-close" id="cg-close" aria-label="Cancelar">✕</button>
+      </div>
+
+      <div class="cg-url-block">
+        <span class="cg-domain" id="cg-domain"></span>
+        <span class="cg-url-full" id="cg-url-full"></span>
+      </div>
+
+      <div class="cg-containers-label">Contenedores disponibles</div>
+      <div class="cg-container-grid" id="cg-grid"></div>
+
+      <div class="cg-footer">
+        <label class="cg-remember-label">
+          <input type="checkbox" id="cg-remember" />
+          <span>Recordar para <strong id="cg-remember-domain"></strong></span>
+        </label>
+        <div class="cg-footer-actions">
+          <button class="cg-btn cg-btn-normal" id="cg-open-normal">
+            Abrir sin contenedor
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="interstitial.js"></script>
+</body>
+</html>

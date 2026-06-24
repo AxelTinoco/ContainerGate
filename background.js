@@ -1,7 +1,7 @@
 /**
  * ContainerGate - background.js
  * Intercepta URLs que llegan desde aplicaciones externas al navegador
- * y muestra un selector de contenedor.
+ * ANTES de que la página cargue y muestra un selector de contenedor.
  */
 
 const STORAGE_KEYS = {
@@ -9,8 +9,13 @@ const STORAGE_KEYS = {
   RULES: "cg_rules",               // domain -> containerId guardados
 };
 
-// Tabs pendientes de decisión: tabId -> { url, resolve }
-const pendingTabs = new Map();
+// Pestañas creadas durante esta sesión sin tab de origen (candidatas a "externas").
+// Solo la primera navegación http de estas pestañas se intercepta.
+const externalTabs = new Set();
+
+// Pestañas que ABRIMOS nosotros (ya en un contenedor o "sin contenedor"): su
+// primera navegación debe pasar sin interceptar para evitar bucles infinitos.
+const selfOpenedTabs = new Set();
 
 // ─────────────────────────────────────────────
 // Utilidades de storage
@@ -39,114 +44,112 @@ function getDomain(url) {
 }
 
 // ─────────────────────────────────────────────
-// Detectar si la tab viene de fuera del navegador
-// (opener es null y no tiene tab referente)
-// ─────────────────────────────────────────────
-
-function isExternalNavigation(details) {
-  // Firefox expone openerTabId: si no tiene opener, viene de fuera
-  return details.openerTabId === undefined || details.openerTabId === null;
-}
-
-// ─────────────────────────────────────────────
 // Abrir URL en un contenedor específico
 // ─────────────────────────────────────────────
 
 async function openInContainer(url, containerId, currentTabId) {
-  const cookieStoreId = containerId === "firefox-default"
-    ? "firefox-default"
-    : containerId;
+  const cookieStoreId = containerId || "firefox-default";
 
-  await browser.tabs.create({
+  const newTab = await browser.tabs.create({
     url,
     cookieStoreId,
     active: true,
   });
 
-  // Cerrar la tab original que fue interceptada
+  // Marcar la pestaña que acabamos de crear para que su navegación no se intercepte
+  selfOpenedTabs.add(newTab.id);
+
+  // Cerrar la pestaña original que fue interceptada
+  if (currentTabId != null) {
+    try { await browser.tabs.remove(currentTabId); } catch (_) {}
+  }
+}
+
+async function openWithoutContainer(url, currentTabId) {
+  const newTab = await browser.tabs.create({ url, active: true });
+  selfOpenedTabs.add(newTab.id);
+  if (currentTabId != null) {
+    try { await browser.tabs.remove(currentTabId); } catch (_) {}
+  }
+}
+
+// ─────────────────────────────────────────────
+// Rastrear pestañas externas (sin tab de origen)
+// ─────────────────────────────────────────────
+
+browser.tabs.onCreated.addListener((tab) => {
+  // Sin opener => no proviene de un clic dentro del navegador.
+  // No marcamos las que nosotros mismos abrimos en un contenedor.
+  if (tab.openerTabId == null && !selfOpenedTabs.has(tab.id)) {
+    externalTabs.add(tab.id);
+  }
+});
+
+browser.tabs.onRemoved.addListener((tabId) => {
+  externalTabs.delete(tabId);
+  selfOpenedTabs.delete(tabId);
+});
+
+// ─────────────────────────────────────────────
+// Interceptar la navegación ANTES de cargar la página
+// ─────────────────────────────────────────────
+
+async function handleRequest(details) {
+  const { url, tabId } = details;
+
+  if (tabId < 0) return {};
+  if (!/^https?:\/\//i.test(url)) return {}; // ignorar about:, moz-extension:, file:, etc.
+
+  // Pestaña abierta por nosotros: dejar pasar (evita bucle infinito).
+  if (selfOpenedTabs.has(tabId)) {
+    selfOpenedTabs.delete(tabId);
+    externalTabs.delete(tabId);
+    return {};
+  }
+
+  // Solo interceptamos pestañas "externas" en su primera navegación.
+  if (!externalTabs.has(tabId)) return {};
+  externalTabs.delete(tabId);
+
+  // Si la navegación fue iniciada por otra página (clic/JS), no es externa.
+  if (details.originUrl || details.documentUrl) return {};
+
+  // Si la pestaña YA está en un contenedor (escribiste la URL a mano dentro de
+  // un contenedor), no preguntamos: que cargue directo en ese contenedor.
   try {
-    await browser.tabs.remove(currentTabId);
+    const tab = await browser.tabs.get(tabId);
+    if (tab.cookieStoreId && tab.cookieStoreId !== "firefox-default") return {};
   } catch (_) {}
-}
 
-// ─────────────────────────────────────────────
-// Pedir al content script que muestre el modal
-// ─────────────────────────────────────────────
-
-async function showContainerModal(tabId, url) {
-  const containers = await browser.contextualIdentities.query({});
-  const whitelist = await getWhitelist();
-  const rules = await getRules();
   const domain = getDomain(url);
+  if (!domain) return {};
 
-  await browser.tabs.sendMessage(tabId, {
-    type: "CG_SHOW_MODAL",
-    url,
-    domain,
-    containers: containers.map((c) => ({
-      id: c.cookieStoreId,
-      name: c.name,
-      color: c.color,
-      icon: c.icon,
-    })),
-    whitelist,
-    rules,
-  });
+  // Lista blanca: dejar pasar tal cual.
+  const whitelist = await getWhitelist();
+  if (whitelist.includes(domain)) return {};
+
+  // Regla guardada: abrir directo en su contenedor (cancelando esta carga).
+  const rules = await getRules();
+  const ruleId = rules[domain];
+  if (ruleId && ruleId !== "ask") {
+    openInContainer(url, ruleId, tabId);
+    return { cancel: true };
+  }
+
+  // Sin regla: redirigir a la página interstitial (la página real NO se carga).
+  const target = browser.runtime.getURL("interstitial/interstitial.html")
+    + "?url=" + encodeURIComponent(url);
+  return { redirectUrl: target };
 }
 
-// ─────────────────────────────────────────────
-// Listener: nueva tab creada
-// ─────────────────────────────────────────────
-
-browser.tabs.onCreated.addListener(async (tab) => {
-  // Esperar a que la tab tenga URL
-  if (!tab.url || tab.url === "about:blank" || tab.url === "about:newtab") {
-    pendingTabs.set(tab.id, { waitingForUrl: true });
-  }
-});
+browser.webRequest.onBeforeRequest.addListener(
+  handleRequest,
+  { urls: ["http://*/*", "https://*/*"], types: ["main_frame"] },
+  ["blocking"]
+);
 
 // ─────────────────────────────────────────────
-// Listener: tab actualizada (obtenemos la URL real)
-// ─────────────────────────────────────────────
-
-browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status !== "complete") return;
-  if (!tab.url || tab.url.startsWith("about:") || tab.url.startsWith("moz-extension:")) return;
-
-  const isPending = pendingTabs.get(tabId);
-
-  // Solo procesamos tabs que arrancaron sin URL (externas)
-  if (!isPending || !isPending.waitingForUrl) return;
-
-  pendingTabs.delete(tabId);
-
-  const domain = getDomain(tab.url);
-  if (!domain) return;
-
-  // Revisar lista blanca
-  const whitelist = await getWhitelist();
-  if (whitelist.includes(domain)) return;
-
-  // Revisar si ya hay una regla guardada para este dominio
-  const rules = await getRules();
-  if (rules[domain]) {
-    const containerId = rules[domain];
-    if (containerId !== "ask") {
-      await openInContainer(tab.url, containerId, tabId);
-      return;
-    }
-  }
-
-  // Mostrar modal de selección
-  try {
-    await showContainerModal(tabId, tab.url);
-  } catch (err) {
-    console.error("[ContainerGate] No se pudo mostrar el modal:", err);
-  }
-});
-
-// ─────────────────────────────────────────────
-// Listener: mensajes desde content script o popup
+// Listener: mensajes desde la interstitial o el popup
 // ─────────────────────────────────────────────
 
 browser.runtime.onMessage.addListener(async (message, sender) => {
@@ -157,7 +160,6 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
       const { url, containerId, remember, domain } = message;
       const tabId = sender.tab?.id;
 
-      // Guardar regla si pidió recordar
       if (remember && domain) {
         const rules = await getRules();
         rules[domain] = containerId;
@@ -170,18 +172,16 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
 
     // Usuario eligió abrir sin contenedor
     case "CG_OPEN_NORMAL": {
-      const { url } = message;
-      const tabId = sender.tab?.id;
-
-      await browser.tabs.create({ url, active: true });
-      try { await browser.tabs.remove(tabId); } catch (_) {}
+      await openWithoutContainer(message.url, sender.tab?.id);
       break;
     }
 
-    // Usuario canceló
+    // Usuario canceló: cerrar la pestaña interstitial
     case "CG_CANCEL": {
       const tabId = sender.tab?.id;
-      try { await browser.tabs.remove(tabId); } catch (_) {}
+      if (tabId != null) {
+        try { await browser.tabs.remove(tabId); } catch (_) {}
+      }
       break;
     }
 
