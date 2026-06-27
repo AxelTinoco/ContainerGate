@@ -18,7 +18,7 @@
   "whitelistEmpty": { "message": "No hay dominios en la lista blanca" },
   "rulesDesc": { "message": "Dominios con contenedor recordado. Puedes eliminar una regla para que vuelva a preguntar." },
   "rulesEmpty": { "message": "No hay reglas guardadas" },
-  "aboutVersion": { "message": "Versión 1.0.0" },
+  "aboutVersion": { "message": "Versión 1.0.1" },
   "aboutDesc": { "message": "Intercepta URLs que se abren desde aplicaciones externas y te permite elegir en qué contenedor de Firefox se abrirán, manteniendo tus identidades digitales separadas." },
   "feature1": { "message": "🚪 Intercepción de links externos" },
   "feature2": { "message": "📦 Selector de contenedor visual" },

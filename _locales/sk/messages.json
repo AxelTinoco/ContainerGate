@@ -18,7 +18,7 @@
   "whitelistEmpty": { "message": "V bielej listine nie sú žiadne domény" },
   "rulesDesc": { "message": "Domény so zapamätaným kontajnerom. Pravidlo môžete odstrániť, aby sa znova pýtalo." },
   "rulesEmpty": { "message": "Žiadne uložené pravidlá" },
-  "aboutVersion": { "message": "Verzia 1.0.0" },
+  "aboutVersion": { "message": "Verzia 1.0.1" },
   "aboutDesc": { "message": "Zachytáva adresy URL otvárané z externých aplikácií a umožňuje vám vybrať, v ktorom kontajneri Firefoxu sa otvoria, čím udržiava vaše digitálne identity oddelené." },
   "feature1": { "message": "🚪 Zachytávanie externých odkazov" },
   "feature2": { "message": "📦 Vizuálny výber kontajnera" },

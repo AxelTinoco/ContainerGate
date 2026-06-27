@@ -51,11 +51,16 @@ Para instalar permanentemente sin firma (solo en Firefox Developer Edition o Nig
 
 ```
 ContainerGate/
-├── manifest.json          # Configuración de la extensión
+├── manifest.json          # Configuración de la extensión (Manifest V2)
 ├── background.js          # Lógica principal de intercepción
-├── content/
-│   ├── modal.js           # Modal de selección de contenedor
-│   └── modal.css          # Estilos del modal
+├── i18n.js                # Helper de i18n para páginas inyectadas
+├── _locales/              # Traducciones (en, es_MX, pt, ru, sk)
+│   └── <locale>/messages.json
+├── interstitial/          # Pantalla de selección de contenedor
+│   ├── interstitial.html
+│   ├── interstitial.css
+│   ├── interstitial.js
+│   └── assets/
 ├── popup/
 │   ├── popup.html         # Panel del toolbar
 │   ├── popup.css          # Estilos del panel
@@ -90,3 +95,21 @@ ContainerGate/
 5. Si no hay regla, muestra el **modal de selección**
 6. El usuario elige un contenedor (o abre sin contenedor)
 7. ContainerGate abre la URL en el contenedor elegido y cierra la tab original
+
+---
+
+## 🤝 Contribuir
+
+¡Las contribuciones son bienvenidas! Lee la guía de
+[**CONTRIBUTING.md**](CONTRIBUTING.md) para saber cómo configurar el entorno,
+el estilo de commits y el proceso de pull requests. Al participar aceptas el
+[Código de Conducta](CODE_OF_CONDUCT.md).
+
+¿Encontraste un fallo de seguridad? Consulta [SECURITY.md](SECURITY.md) para
+reportarlo de forma privada.
+
+---
+
+## 📄 Licencia
+
+Distribuido bajo la **[Mozilla Public License 2.0](LICENSE)**.

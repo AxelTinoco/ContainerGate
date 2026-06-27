@@ -18,7 +18,7 @@
   "whitelistEmpty": { "message": "Não há domínios na lista branca" },
   "rulesDesc": { "message": "Domínios com contêiner lembrado. Você pode excluir uma regra para perguntar novamente." },
   "rulesEmpty": { "message": "Nenhuma regra salva" },
-  "aboutVersion": { "message": "Versão 1.0.0" },
+  "aboutVersion": { "message": "Versão 1.0.1" },
   "aboutDesc": { "message": "Intercepta URLs abertas a partir de aplicativos externos e permite escolher em qual contêiner do Firefox elas serão abertas, mantendo suas identidades digitais separadas." },
   "feature1": { "message": "🚪 Interceptação de links externos" },
   "feature2": { "message": "📦 Seletor visual de contêiner" },

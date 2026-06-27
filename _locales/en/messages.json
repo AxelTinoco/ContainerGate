@@ -18,7 +18,7 @@
   "whitelistEmpty": { "message": "No domains in the whitelist" },
   "rulesDesc": { "message": "Domains with a remembered container. You can delete a rule to be asked again." },
   "rulesEmpty": { "message": "No saved rules" },
-  "aboutVersion": { "message": "Version 1.0.0" },
+  "aboutVersion": { "message": "Version 1.0.1" },
   "aboutDesc": { "message": "Intercepts URLs opened from external applications and lets you choose which Firefox container they open in, keeping your digital identities separate." },
   "feature1": { "message": "🚪 External link interception" },
   "feature2": { "message": "📦 Visual container picker" },
