@@ -48,25 +48,33 @@ tabs.forEach((tab, i) => {
 async function loadWhitelist() {
   const whitelist = await browser.runtime.sendMessage({ type: "CG_GET_WHITELIST" });
   const list = document.getElementById("whitelist-list");
-  list.innerHTML = "";
+  list.replaceChildren();
 
   if (!whitelist.length) {
-    list.innerHTML = `<li class="empty-state">${escHtml(t("whitelistEmpty"))}</li>`;
+    list.appendChild(emptyState(t("whitelistEmpty")));
     return;
   }
 
   whitelist.forEach((domain) => {
     const li = document.createElement("li");
     li.className = "item-row";
-    li.innerHTML = `
-      <span class="item-domain">${escHtml(domain)}</span>
-      <button class="btn btn-ghost" data-domain="${escHtml(domain)}">${escHtml(t("btnRemove"))}</button>`;
-    li.querySelector("button").addEventListener("click", async () => {
+
+    const domainSpan = document.createElement("span");
+    domainSpan.className = "item-domain";
+    domainSpan.textContent = domain;
+
+    const btn = document.createElement("button");
+    btn.className = "btn btn-ghost";
+    btn.dataset.domain = domain;
+    btn.textContent = t("btnRemove");
+    btn.addEventListener("click", async () => {
       const updated = whitelist.filter((d) => d !== domain);
       await browser.runtime.sendMessage({ type: "CG_SET_WHITELIST", whitelist: updated });
       showToast(t("toastDomainRemoved"));
       loadWhitelist();
     });
+
+    li.append(domainSpan, btn);
     list.appendChild(li);
   });
 }
@@ -102,11 +110,11 @@ async function loadRules() {
   containers.forEach((c) => { containerMap[c.cookieStoreId] = c; });
 
   const list = document.getElementById("rules-list");
-  list.innerHTML = "";
+  list.replaceChildren();
 
   const entries = Object.entries(rules);
   if (!entries.length) {
-    list.innerHTML = `<li class="empty-state">${escHtml(t("rulesEmpty"))}</li>`;
+    list.appendChild(emptyState(t("rulesEmpty")));
     return;
   }
 
@@ -117,18 +125,29 @@ async function loadRules() {
 
     const li = document.createElement("li");
     li.className = "item-row";
-    li.innerHTML = `
-      <span class="item-domain">${escHtml(domain)}</span>
-      <span class="item-container-badge">
-        <span class="item-dot" style="background:${color}"></span>
-        ${escHtml(name)}
-      </span>
-      <button class="btn btn-ghost" data-domain="${escHtml(domain)}">${escHtml(t("btnRemoveShort"))}</button>`;
-    li.querySelector("button").addEventListener("click", async () => {
+
+    const domainSpan = document.createElement("span");
+    domainSpan.className = "item-domain";
+    domainSpan.textContent = domain;
+
+    const badge = document.createElement("span");
+    badge.className = "item-container-badge";
+    const dot = document.createElement("span");
+    dot.className = "item-dot";
+    dot.style.background = color;
+    badge.append(dot, document.createTextNode(" " + name));
+
+    const btn = document.createElement("button");
+    btn.className = "btn btn-ghost";
+    btn.dataset.domain = domain;
+    btn.textContent = t("btnRemoveShort");
+    btn.addEventListener("click", async () => {
       await browser.runtime.sendMessage({ type: "CG_DELETE_RULE", domain });
       showToast(t("toastRuleRemoved"));
       loadRules();
     });
+
+    li.append(domainSpan, badge, btn);
     list.appendChild(li);
   });
 }
@@ -147,10 +166,11 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove("show"), 1800);
 }
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function emptyState(msg) {
+  const li = document.createElement("li");
+  li.className = "empty-state";
+  li.textContent = msg;
+  return li;
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────
